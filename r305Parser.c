@@ -35,7 +35,8 @@ void getBasePackage(data_package *package, uint8_t pid, uint16_t length,
 uint16_t autoSetChecksum(data_package *package) {
 	uint16_t i = 0;
 	package->checksum = (uint16_t) package->pid + (uint16_t) package->length;
-	for (i = 0; i < package->length - sizeof(package->checksum); i++) {
+	int temp=package->length - sizeof(package->checksum);
+	for (i = 0; i < temp; i++) {
 		package->checksum += (uint16_t) package->data[i];
 	}
 	return package->checksum;
@@ -101,7 +102,6 @@ uint8_t loadPackage(uint8_t* package_string, data_package *package) {
 	package->pid = (uint8_t) package_string[6];
 	package->length = (uint16_t) package_string[7] << 8
 			| (uint16_t) package_string[8];
-
 	package->data_size = package->length - sizeof(package->checksum);
 
 	for (i = 0; i < package->data_size; i++) {
@@ -109,8 +109,10 @@ uint8_t loadPackage(uint8_t* package_string, data_package *package) {
 		// package->length - sizeof(package->checksum) -1 to get the highest byte
 		package->data[package->data_size - 1 - i] = package_string[9 + i];
 	}
+
 	autoSetChecksum(package);
 	autoSetPackageSize(package);
+
 	// Copy string
 	for (i = 0; i < package->package_size; i++) {
 		package->package_string[i] = package_string[i];

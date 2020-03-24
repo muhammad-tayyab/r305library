@@ -1,7 +1,7 @@
 all:r305Parser test_exe doc build_test_avr
 
 test_exe:test.c r305Parser
-	gcc test.c r305Parser.o -g --static -o test.exe
+	gcc test.c r305Parser.o ../c-periphery/build/libperiphery.a -g --static -o test.exe
 
 test_exe_ci: test.c r305Parser.c
 	i686-w64-mingw32-gcc r305Parser.c test.c --static -o test.exe
